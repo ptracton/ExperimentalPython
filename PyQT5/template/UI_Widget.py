@@ -5,6 +5,10 @@ import PyQt5.QtWidgets
 
 class UI_Widget(PyQt5.QtWidgets.QDialog):
     def __init__(self, parent=None):
+        """
+        This is the layer that handles creating and displaying the various
+        UI elements in the central window
+        """
         super(UI_Widget, self).__init__(parent)
         vbox = PyQt5.QtWidgets.QVBoxLayout()
 
@@ -13,6 +17,6 @@ class UI_Widget(PyQt5.QtWidgets.QDialog):
 
         vbox.addWidget(label)
         vbox.addWidget(self.button)
-        
+
         self.setLayout(vbox)
         return

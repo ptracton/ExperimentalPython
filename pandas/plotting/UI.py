@@ -6,10 +6,15 @@ level can interact
 """
 
 import logging
+
+import numpy as np
+import pandas as pd
+
 import PyQt5
 import PyQt5.QtCore
 import PyQt5.QtWidgets
 
+import Stock
 import UI_Widget
 
 
@@ -41,19 +46,24 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         self.central = UI_Widget.UI_Widget()
 
         # connecting the button in the UI_Widget to a callback function at this level
-        self.central.button.clicked.connect(self.buttonClickedConnect)
+        self.central.stockAnalysisPushButton.clicked.connect(
+            self.stockAnalysisPushButtonClicked)
 
         self.setCentralWidget(self.central)
-        self.setWindowTitle('Window Title')
+        self.setWindowTitle('Stock Analysis')
         self.show()
 
         return
 
-    def buttonClickedConnect(self):
-        """
-        This is an example of a callback action on a connection
-        for a button being clicked
-        """
-        print("Button Click Callback")
-        logging.debug("buttonClickedConnect Callback")
+    def stockAnalysisPushButtonClicked(self):
+        stockName = self.central.stocksComboBox.currentText()
+        stocksDir = "../stocks/"
+        stockFileName = stocksDir + stockName.lower() + ".us.txt"
+
+        print("stockAnalysisPushButtonClicked {}".format(stockName))
+        logging.debug("stockAnalysisPushButtonClicked {}".format(stockName))
+
+        stockInstance = Stock.Stock(stockName=stockName)
+        stockInstance.read_csv()
+        self.central.plot.plot(stockInstance.stockDataFrame['Open'])
         return
