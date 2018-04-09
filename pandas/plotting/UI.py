@@ -14,6 +14,8 @@ import PyQt5
 import PyQt5.QtCore
 import PyQt5.QtWidgets
 
+import pyqtgraph as pg
+
 import Stock
 import UI_Widget
 
@@ -49,6 +51,9 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         self.central.stockAnalysisPushButton.clicked.connect(
             self.stockAnalysisPushButtonClicked)
 
+        self.listOfPlotColors = ['r', 'b', 'g', 'c', 'm', 'y', 'k', 'w']
+        self.indexOfPlotColor = 0
+
         self.setCentralWidget(self.central)
         self.setWindowTitle('Stock Analysis')
         self.show()
@@ -65,5 +70,14 @@ class UI(PyQt5.QtWidgets.QMainWindow):
 
         stockInstance = Stock.Stock(stockName=stockName)
         stockInstance.read_csv()
-        self.central.plot.plot(stockInstance.stockDataFrame['Open'])
+        self.central.pgplot.plot(stockInstance.stockDataFrame['Open'],
+                                 pen=self.listOfPlotColors[self.indexOfPlotColor])
+        self.central.matplot.addLine(x=stockInstance.stockDataFrame['Date'],
+                                  y=stockInstance.stockDataFrame['Open'],
+                                  title=stockName)
+
+        self.indexOfPlotColor = self.indexOfPlotColor + 1
+        if self.indexOfPlotColor > len(self.listOfPlotColors):
+            self.indexOfPlotColor = 0
+
         return

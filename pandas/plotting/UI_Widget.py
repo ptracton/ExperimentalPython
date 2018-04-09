@@ -6,6 +6,7 @@ import PyQt5.QtCore
 import PyQt5.QtWidgets
 
 import pyqtgraph as pg
+import QtMpl
 
 class UI_Widget(PyQt5.QtWidgets.QDialog):
     def __init__(self, parent=None):
@@ -29,15 +30,24 @@ class UI_Widget(PyQt5.QtWidgets.QDialog):
 
         self.getListOfStocks()
 
-        self.plot = pg.PlotWidget()
-        self.plot.setWindowTitle("Stock Analysis")
-        self.plot.showGrid(x=True, y=True)
-        self.plot.setLabel(axis='left', text='Y Axis', units='y units')
-        self.plot.setLabel(axis='bottom', text='x Axis', units='x units')
-
+        self.pgplot = pg.PlotWidget()
+        self.pgplot.addLegend((100,70), offset=(70,30))
+        self.pgplot.setWindowTitle("Stock Analysis")
+        self.pgplot.showGrid(x=True, y=True)
+        self.pgplot.setLabel(axis='left', text='Stock Price', units='$')
+        self.pgplot.setLabel(axis='bottom', text='Date', units='days')
+        
+        #######################################################################
+        #
+        # Matplotlib object
+        #
+        #######################################################################
+        self.matplot = QtMpl.QtMpl(parent=parent)
+        self.line_count = 0
         
         vbox.addLayout(hbox)
-        vbox.addWidget(self.plot)
+        vbox.addWidget(self.pgplot)
+        vbox.addWidget(self.matplot)
         
         self.setLayout(vbox)
         return
