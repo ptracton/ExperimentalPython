@@ -8,6 +8,15 @@ import PyQt5.QtWidgets
 import pyqtgraph as pg
 import QtMpl
 
+class TimeAxisItem(pg.AxisItem):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        return
+
+    def tickStrings(self, values, scale, spacing):
+        # PySide's QTime() initialiser fails miserably and dismisses args/kwargs
+        return [PyQt5.QtCore.QTime().addMSecs(value).toString('mm:ss') for value in values]
+
 class UI_Widget(PyQt5.QtWidgets.QDialog):
     def __init__(self, parent=None):
         """
@@ -30,13 +39,17 @@ class UI_Widget(PyQt5.QtWidgets.QDialog):
 
         self.getListOfStocks()
 
-        self.pgplot = pg.PlotWidget()
-        self.pgplot.addLegend((100,70), offset=(70,30))
+        self.pgwindow = pg.GraphicsWindow(title="TITLE")
+        self.pgplot = self.pgwindow.addPlot(
+            title="Stock Data",
+            axisItems={'bottom': TimeAxisItem(orientation='bottom')})
+        self.pgcurve = self.pgplot.plot()
+        self.pgplot.addLegend((100, 70), offset=(70, 30))
         self.pgplot.setWindowTitle("Stock Analysis")
         self.pgplot.showGrid(x=True, y=True)
         self.pgplot.setLabel(axis='left', text='Stock Price', units='$')
         self.pgplot.setLabel(axis='bottom', text='Date', units='days')
-        
+
         #######################################################################
         #
         # Matplotlib object
@@ -44,14 +57,19 @@ class UI_Widget(PyQt5.QtWidgets.QDialog):
         #######################################################################
         self.matplot = QtMpl.QtMpl(parent=parent)
         self.line_count = 0
-        
+
         vbox.addLayout(hbox)
-        vbox.addWidget(self.pgplot)
+        vbox.addWidget(self.pgwindow)
         vbox.addWidget(self.matplot)
-        
+
         self.setLayout(vbox)
         return
 
+    def addLine(self, x=None, y=None, title=None, color='b'):
+        curve = self.pgplot.plot()
+        curve.setData(y=y, title=title, pen=color)
+        return
+    
     def getListOfStocks(self):
         """
         Get out list of stocks from the CSV files in the ../stocks/
@@ -62,12 +80,11 @@ class UI_Widget(PyQt5.QtWidgets.QDialog):
         stocksListDir = os.listdir(stocksDir)
         logging.debug("{}".format(stocksListDir))
         print("{}".format(stocksListDir))
-        
+
         correctedStocks = []
         for stock in stocksListDir:
             s = stock.split(".")
             correctedStocks.append(s[0].upper())
-        
 
         self.stocksComboBox.addItems(correctedStocks)
         return

@@ -15,7 +15,7 @@ class OpenMovie():
     """
     """
 
-    def __init__(self, title=None):
+    def __init__(self, title=None, tomatoes=False):
         self.title = title
         self.client = omdb.OMDBClient(apikey=os.environ['OMDB_API_KEY'])
         self.posterFileName = None
@@ -25,7 +25,7 @@ class OpenMovie():
             pass
         
         try:
-            self.movie = self.client.get(title=title)
+            self.movie = self.client.get(title=title, tomatoes=tomatoes)
         except Exception:
             logging.error("FAILED to get movie {}".format(title))
             print(traceback.format_exc())

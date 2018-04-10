@@ -70,8 +70,22 @@ class UI(PyQt5.QtWidgets.QMainWindow):
 
         stockInstance = Stock.Stock(stockName=stockName)
         stockInstance.read_csv()
-        self.central.pgplot.plot(stockInstance.stockDataFrame['Open'],
-                                 pen=self.listOfPlotColors[self.indexOfPlotColor])
+
+
+        print(type(stockInstance.stockDataFrame['Date'].astype(np.ndarray)))
+        #print("{}".format(stockInstance.stockDataFrame['Date']))
+
+
+        
+#        self.central.pgcurve.setData(y=stockInstance.stockDataFrame['Open'].values,
+#                                     x=stockInstance.stockDataFrame['Date'].as_matrix())
+        
+        self.central.addLine(y=stockInstance.stockDataFrame['Open'].values,
+                             x=stockInstance.stockDataFrame['Date'],
+                             title=stockName,
+                             color=self.listOfPlotColors[self.indexOfPlotColor]
+        )
+        
         self.central.matplot.addLine(x=stockInstance.stockDataFrame['Date'],
                                   y=stockInstance.stockDataFrame['Open'],
                                   title=stockName)

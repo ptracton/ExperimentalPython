@@ -3,6 +3,7 @@ This is the top level UI for the Python Movies Project
 At this level we instantiate the Central Window which has the
 GUI elements.  This is also the level of handling signal/slot connections.
 """
+import datetime
 import json
 import logging
 
@@ -55,12 +56,8 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             logging.error("Movie Not in Database {}".format(movieTitle))
             return
 
-        #movieTitleSQL = """select * from public."Movies" where title = '{}';""".format(movieTitle)
-        movieTitleSQL = """select * from public."Movies" where release_date>'2010-01-01' and release_date <'2011-01-01';"""
-        movieDataFrame = pd.read_sql(movieTitleSQL, ORM.db.raw_connection())
-        print(type(movieDataFrame))
-        print(movieDataFrame)
-        
+        year, month, day = movieTitleQuery.release_date.split('-')
+            
         # There must be at least 1 movie with this title, look up the credits for this title.
         movieCreditsQuery = ORM.session.query(
             ORM.Credits).filter(ORM.Credits.title == movieTitle)
@@ -102,7 +99,73 @@ class UI(PyQt5.QtWidgets.QMainWindow):
 
         openMovie = OpenMovie.OpenMovie(title=movieTitle)
 
+        self.statusBar().showMessage("Start Getting Poster")
         if (openMovie.getPoster() is False):
             return
         self.centralWidget.updatePoster(openMovie.posterFileName)
+        self.statusBar().showMessage("Done Getting Poster")
+        
+        self.analyzeYear(int(year))
+        
+        return
+
+    def analyzeYear(self, year=None):
+        months = range(1,13)
+        monthlyBudget = []
+        monthlyRevenue = []
+        monthlyMaxRevenue = []
+        
+        for m in months:
+            nextMonth = m +1
+            startOfMonth = "{}-{}-01".format(year, m)
+            if nextMonth == 13:
+                endOfMonth = "{}-{}-01".format(year+1, 1)
+            else:
+                endOfMonth = "{}-{}-01".format(year, nextMonth)
+            movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}';""".format(startOfMonth, endOfMonth)
+            monthlyMovieDataFrame = pd.read_sql(movieTitleSQL, ORM.db.raw_connection())
+            monthlyBudget.append(monthlyMovieDataFrame['budget'].sum())
+            monthlyRevenue.append(monthlyMovieDataFrame['revenue'].sum())
+            #maxRev = monthlyMovieDataFrame['revenue'].max()
+            #print(maxRev)
+            
+#            movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}' and revenue = {};""".format(startOfMonth, endOfMonth, int(maxRev))
+#            maxMovieDataFrame = pd.read_sql(movieTitleSQL, ORM.db.raw_connection())
+#            monthlyMaxRevenue.append(maxMovieDataFrame['title'])
+            
+        startOfYear = "{}-01-01".format(year)
+        endOfYear = "{}-01-01".format(int(year)+1)
+        movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}';""".format(startOfYear, endOfYear)
+        
+        yearMovieDataFrame = pd.read_sql(movieTitleSQL, ORM.db.raw_connection())
+        annualBudget = yearMovieDataFrame['budget'].sum()
+        annualRevenue = yearMovieDataFrame['revenue'].sum()
+        numberOfMovies = len(yearMovieDataFrame['revenue'])
+        print("Annual Budget {:,}".format(annualBudget))
+        print("Annual Revenue {:,}".format(annualRevenue))
+        print("Number Of Movies {:,}".format(numberOfMovies))
+        for m in months:
+            print("Month {}  Budget {:,} Revenue {:,} ".format(m, monthlyBudget[m-1],
+                                                                     monthlyRevenue[m-1],
+                                                                     monthlyRevenue[m-1]))
+        
+        """
+        openMovieList = []
+        self.statusBar().showMessage("Start Open Movie Downloading....")
+        print(type(yearMovieDataFrame))
+        for x in yearMovieDataFrame['original_title']:
+            m = OpenMovie.OpenMovie(title=x, tomatoes=True)
+            if 'title' in m.movie.keys():
+                print("TITLE {}  DIRECTOR {} ACTORS {} IMDB RATING {}  META {}  TOMATO {}".format(
+                    m.movie['title'],
+                    m.movie['director'],
+                    m.movie['actors'],
+                    m.movie['imdb_rating'],
+                    m.movie['metascore'],
+                    m.movie['tomato_rating']
+                ))
+
+        self.statusBar().showMessage("Done Open Movie Downloading")
+        """
+        
         return
