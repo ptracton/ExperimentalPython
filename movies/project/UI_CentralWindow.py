@@ -5,6 +5,7 @@ This file handles holding the main GUI elements
 import PyQt5
 import PyQt5.QtWidgets
 
+import QtMpl
 import UI_MovieInfo
 
 class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
@@ -64,6 +65,9 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         self.posterLabel = PyQt5.QtWidgets.QLabel("Poster Goes Here")
         self.pixmap = PyQt5.QtGui.QPixmap()
 
+        self.matplot = QtMpl.QtMpl(parent=parent)
+        self.matplot.show()
+        
         hboxInfoAndPoster.addWidget(self.posterLabel)
         vboxInfo.addLayout(hboxInfo1)
         vboxInfo.addLayout(hboxInfo2)
@@ -72,7 +76,7 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         
         vbox.addLayout(hboxSearch)
         vbox.addLayout(hboxInfoAndPoster)
-
+        vbox.addWidget(self.matplot)
         
         # Put into layout to view
         self.setLayout(vbox)

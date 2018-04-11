@@ -173,6 +173,7 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             print("Month {}  Budget {:,} Revenue {:,}".format(
                 m, monthlyBudget[m - 1], monthlyRevenue[m - 1],
                 monthlyRevenue[m - 1]))
+            self.centralWidget.matplot.addBar(x=m, y=monthlyRevenue[m - 1])
         """
         openMovieList = []
         self.statusBar().showMessage("Start Open Movie Downloading....")
