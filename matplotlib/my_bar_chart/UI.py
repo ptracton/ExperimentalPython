@@ -42,6 +42,11 @@ class UI(PyQt5.QtWidgets.QMainWindow):
 
         # This is our main UI element.  All of parts are inside of it
         self.central = UI_Widget.UI_Widget()
+
+#        self.central.matplot.addBars(self.plotDataXList,
+ #                                    self.plotDataYList)
+        self.central.matplot.show()
+        
         
         # connecting the button in the UI_Widget to a callback function at this level
         self.central.button.clicked.connect(self.buttonClickedConnect)
