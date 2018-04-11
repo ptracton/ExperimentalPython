@@ -11,13 +11,13 @@ class QtMpl(FigureCanvasQTAgg):
 
     def __init__(self, parent):
 
-#        self.fig = matplotlib.figure.Figure()
+        #self.fig = matplotlib.figure.Figure()
+        #self.axes = matplotlib.pyplot.gca()
+
         self.fig, self.axes = matplotlib.pyplot.subplots()
+        
         FigureCanvasQTAgg.__init__(self, self.fig)
         self.setParent(parent)
-
-
- #       self.axes = matplotlib.pyplot.gca()        
 
         # we define the widget as expandable
         FigureCanvasQTAgg.setSizePolicy(self, PyQt5.QtWidgets.QSizePolicy.Expanding,
