@@ -57,7 +57,7 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             return
 
         year, month, day = movieTitleQuery.release_date.split('-')
-            
+
         # There must be at least 1 movie with this title, look up the credits for this title.
         movieCreditsQuery = ORM.session.query(
             ORM.Credits).filter(ORM.Credits.title == movieTitle)
@@ -104,51 +104,75 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             return
         self.centralWidget.updatePoster(openMovie.posterFileName)
         self.statusBar().showMessage("Done Getting Poster")
-        
+
         self.analyzeYear(int(year))
-        
+
         return
 
     def analyzeYear(self, year=None):
-        months = range(1,13)
+
+        print("Analyze Year {}".format(year))
+        months = range(1, 13)
         monthlyBudget = []
         monthlyRevenue = []
         monthlyMaxRevenue = []
-        
+        monthlyMovieCount = []
+        monthlyMovieTitles = []
         for m in months:
-            nextMonth = m +1
-            startOfMonth = "{}-{}-01".format(year, m)
+            nextMonth = m + 1
+            startOfMonth = "{}-{:02d}-01".format(year, m)
             if nextMonth == 13:
-                endOfMonth = "{}-{}-01".format(year+1, 1)
+                endOfMonth = "{}-{:02d}-01".format(year + 1, 1)
             else:
-                endOfMonth = "{}-{}-01".format(year, nextMonth)
-            movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}';""".format(startOfMonth, endOfMonth)
-            monthlyMovieDataFrame = pd.read_sql(movieTitleSQL, ORM.db.raw_connection())
+                endOfMonth = "{}-{:02d}-01".format(year, nextMonth)
+
+            print("\nSTART: {}  END {}".format(startOfMonth, endOfMonth))
+
+            movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}';""".format(
+                startOfMonth, endOfMonth)
+            monthlyMovieDataFrame = pd.read_sql(movieTitleSQL,
+                                                ORM.db.raw_connection())
             monthlyBudget.append(monthlyMovieDataFrame['budget'].sum())
             monthlyRevenue.append(monthlyMovieDataFrame['revenue'].sum())
+
+            monthlyMovieDataFrame.set_index('title')
+            print("Month: {}".format(m))
+            #print("Monthyl DataFrame {}".format(monthlyMovieDataFrame))
+            for row in monthlyMovieDataFrame.iterrows():
+                movie = row[1].to_dict()
+                print("\tTITLE:{:40} RELEASE {:8} BUDGET {:10} REVENUE {:10}".
+                      format(movie['title'], movie['release_date'],
+                             movie['budget'], movie['revenue']))
+
+                #print("\tMOVIE: {} ".format(movie))
+                #monthlyMovieTitles.append(title)
+                #print("\t{} {}".format(title, monthlyMovieDataFrame['title'], monthlyMovieDataFrame.loc[[2]] ))
             #maxRev = monthlyMovieDataFrame['revenue'].max()
             #print(maxRev)
-            
+
+
 #            movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}' and revenue = {};""".format(startOfMonth, endOfMonth, int(maxRev))
 #            maxMovieDataFrame = pd.read_sql(movieTitleSQL, ORM.db.raw_connection())
 #            monthlyMaxRevenue.append(maxMovieDataFrame['title'])
-            
+
         startOfYear = "{}-01-01".format(year)
-        endOfYear = "{}-01-01".format(int(year)+1)
-        movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}';""".format(startOfYear, endOfYear)
-        
-        yearMovieDataFrame = pd.read_sql(movieTitleSQL, ORM.db.raw_connection())
+        endOfYear = "{}-01-01".format(int(year) + 1)
+        movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}';""".format(
+            startOfYear, endOfYear)
+
+        yearMovieDataFrame = pd.read_sql(movieTitleSQL,
+                                         ORM.db.raw_connection())
         annualBudget = yearMovieDataFrame['budget'].sum()
         annualRevenue = yearMovieDataFrame['revenue'].sum()
         numberOfMovies = len(yearMovieDataFrame['revenue'])
+
         print("Annual Budget {:,}".format(annualBudget))
         print("Annual Revenue {:,}".format(annualRevenue))
         print("Number Of Movies {:,}".format(numberOfMovies))
         for m in months:
-            print("Month {}  Budget {:,} Revenue {:,} ".format(m, monthlyBudget[m-1],
-                                                                     monthlyRevenue[m-1],
-                                                                     monthlyRevenue[m-1]))
-        
+            print("Month {}  Budget {:,} Revenue {:,}".format(
+                m, monthlyBudget[m - 1], monthlyRevenue[m - 1],
+                monthlyRevenue[m - 1]))
         """
         openMovieList = []
         self.statusBar().showMessage("Start Open Movie Downloading....")
@@ -167,5 +191,5 @@ class UI(PyQt5.QtWidgets.QMainWindow):
 
         self.statusBar().showMessage("Done Open Movie Downloading")
         """
-        
+
         return
