@@ -35,7 +35,7 @@ class QtMpl(FigureCanvasQTAgg):
         # Clear figure for new plt
         self.axes.cla()
 
-        self.axes.set_title('Movie Revenue by Month for {}'.format(year))
+        self.axes.set_title('Movie Revenue and Budget by Month for {}'.format(year))
 
         # add the new bars to the clear plot
         width = 0.35
