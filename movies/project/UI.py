@@ -126,7 +126,7 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             else:
                 endOfMonth = "{}-{:02d}-01".format(year, nextMonth)
 
-            print("\nSTART: {}  END {}".format(startOfMonth, endOfMonth))
+            #print("\nSTART: {}  END {}".format(startOfMonth, endOfMonth))
 
             movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}';""".format(
                 startOfMonth, endOfMonth)
@@ -136,24 +136,16 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             monthlyRevenue.append(monthlyMovieDataFrame['revenue'].sum())
 
             monthlyMovieDataFrame.set_index('title')
-            print("Month: {}".format(m))
+            #print("Month: {}".format(m))
             #print("Monthyl DataFrame {}".format(monthlyMovieDataFrame))
-            for row in monthlyMovieDataFrame.iterrows():
-                movie = row[1].to_dict()
-                print("\tTITLE:{:40} RELEASE {:8} BUDGET {:10} REVENUE {:10}".
-                      format(movie['title'], movie['release_date'],
-                             movie['budget'], movie['revenue']))
+            # for row in monthlyMovieDataFrame.iterrows():
+            #    movie = row[1].to_dict()
+            #    print("\tTITLE:{:40} RELEASE {:8} BUDGET {:10} REVENUE {:10}".
+            #          format(movie['title'], movie['release_date'],
+            #                 movie['budget'], movie['revenue']))
 
-                #print("\tMOVIE: {} ".format(movie))
-                #monthlyMovieTitles.append(title)
-                #print("\t{} {}".format(title, monthlyMovieDataFrame['title'], monthlyMovieDataFrame.loc[[2]] ))
-            #maxRev = monthlyMovieDataFrame['revenue'].max()
-            #print(maxRev)
-
-
-#            movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}' and revenue = {};""".format(startOfMonth, endOfMonth, int(maxRev))
-#            maxMovieDataFrame = pd.read_sql(movieTitleSQL, ORM.db.raw_connection())
-#            monthlyMaxRevenue.append(maxMovieDataFrame['title'])
+        self.centralWidget.matplot.addBars(
+            x=months, revenue=monthlyRevenue, budget=monthlyBudget,  year=year)
 
         startOfYear = "{}-01-01".format(year)
         endOfYear = "{}-01-01".format(int(year) + 1)
@@ -173,7 +165,7 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             print("Month {}  Budget {:,} Revenue {:,}".format(
                 m, monthlyBudget[m - 1], monthlyRevenue[m - 1],
                 monthlyRevenue[m - 1]))
-            self.centralWidget.matplot.addBar(x=m, y=monthlyRevenue[m - 1])
+            #self.centralWidget.matplot.addBars(x=m, y=monthlyRevenue[m - 1], year=year)
         """
         openMovieList = []
         self.statusBar().showMessage("Start Open Movie Downloading....")

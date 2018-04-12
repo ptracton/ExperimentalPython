@@ -8,6 +8,7 @@ import PyQt5.QtWidgets
 import QtMpl
 import UI_MovieInfo
 
+
 class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
     """
     This class holds the GUI elements
@@ -40,16 +41,19 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         # hboxInfo is the layer for presenting the results from the search
         self.directorInformation = UI_MovieInfo.UI_MovieInfo(title="Director:")
         self.actorInformation = UI_MovieInfo.UI_MovieInfo(title="Actor:")
-        self.releaseDateInformation = UI_MovieInfo.UI_MovieInfo(title="Release Date:")
-        
+        self.releaseDateInformation = UI_MovieInfo.UI_MovieInfo(
+            title="Release Date:")
+
         self.budgetInformation = UI_MovieInfo.UI_MovieInfo(title="Budget:")
         self.revenueInformation = UI_MovieInfo.UI_MovieInfo(title="Revenue:")
         self.runTimeInformation = UI_MovieInfo.UI_MovieInfo(title="Run Time:")
 
-        self.voteCountInformation = UI_MovieInfo.UI_MovieInfo(title="Vote Count:")
-        self.voteAverageInformation = UI_MovieInfo.UI_MovieInfo(title="Vote Average:")
+        self.voteCountInformation = UI_MovieInfo.UI_MovieInfo(
+            title="Vote Count:")
+        self.voteAverageInformation = UI_MovieInfo.UI_MovieInfo(
+            title="Vote Average:")
         self.statusInformation = UI_MovieInfo.UI_MovieInfo(title="Status:")
-        
+
         hboxInfo1.addLayout(self.directorInformation.getLayout())
         hboxInfo1.addLayout(self.actorInformation.getLayout())
         hboxInfo1.addLayout(self.releaseDateInformation.getLayout())
@@ -66,25 +70,25 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         self.pixmap = PyQt5.QtGui.QPixmap()
 
         self.matplot = QtMpl.QtMpl(parent=parent)
-        self.matplot.show()
-        
+
         hboxInfoAndPoster.addWidget(self.posterLabel)
         vboxInfo.addLayout(hboxInfo1)
         vboxInfo.addLayout(hboxInfo2)
         vboxInfo.addLayout(hboxInfo3)
         hboxInfoAndPoster.addLayout(vboxInfo)
-        
+
         vbox.addLayout(hboxSearch)
         vbox.addLayout(hboxInfoAndPoster)
         vbox.addWidget(self.matplot)
-        
+
         # Put into layout to view
         self.setLayout(vbox)
         return
 
     def updatePoster(self, posterFileName=None):
         self.pixmap.load(posterFileName)
-        scaledPixmap = self.pixmap.scaled(self.posterLabel.size(), PyQt5.QtCore.Qt.KeepAspectRatio)
+        scaledPixmap = self.pixmap.scaled(self.posterLabel.size(),
+                                          PyQt5.QtCore.Qt.KeepAspectRatio)
         self.posterLabel.setPixmap(self.pixmap)
         self.posterLabel.setScaledContents(False)
         return
