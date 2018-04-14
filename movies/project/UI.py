@@ -7,6 +7,7 @@ import datetime
 import json
 import logging
 
+import numpy as np
 import pandas as pd
 
 import PyQt5
@@ -118,6 +119,23 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         monthlyMaxRevenue = []
         monthlyMovieCount = []
         monthlyMovieTitles = []
+
+        monthlyRevenueMean = []
+        monthlyRevenueMedian = []
+        monthlyRevenueStd = []
+
+        monthlyBudgetMean = []
+        monthlyBudgetMedian = []
+        monthlyBudgetStd = []
+
+        annualBudgetMean = []
+        annualBudgetMedian = []
+        annualBudgetStd = []
+
+        annualRevenueMean = []
+        annualRevenueMedian = []
+        annualRevenueStd = []
+
         for m in months:
             nextMonth = m + 1
             startOfMonth = "{}-{:02d}-01".format(year, m)
@@ -126,7 +144,7 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             else:
                 endOfMonth = "{}-{:02d}-01".format(year, nextMonth)
 
-            #print("\nSTART: {}  END {}".format(startOfMonth, endOfMonth))
+            # print("\nSTART: {}  END {}".format(startOfMonth, endOfMonth))
 
             movieTitleSQL = """select * from public."Movies" where release_date>'{}' and release_date <'{}';""".format(
                 startOfMonth, endOfMonth)
@@ -135,9 +153,17 @@ class UI(PyQt5.QtWidgets.QMainWindow):
             monthlyBudget.append(monthlyMovieDataFrame['budget'].sum())
             monthlyRevenue.append(monthlyMovieDataFrame['revenue'].sum())
 
+            monthlyRevenueMean.append(np.nanmean(monthlyMovieDataFrame['revenue']))
+            monthlyRevenueStd.append(np.nanstd(monthlyMovieDataFrame['revenue']))
+            monthlyRevenueMedian.append(np.nanmedian(monthlyMovieDataFrame['revenue']))
+
+            monthlyBudgetMean.append(np.nanmean(monthlyMovieDataFrame['budget']))
+            monthlyBudgetStd.append(np.nanstd(monthlyMovieDataFrame['budget']))
+            monthlyBudgetMedian.append(np.nanmedian(monthlyMovieDataFrame['budget']))
+
             monthlyMovieDataFrame.set_index('title')
-            #print("Month: {}".format(m))
-            #print("Monthyl DataFrame {}".format(monthlyMovieDataFrame))
+            # print("Month: {}".format(m))
+            # print("Monthyl DataFrame {}".format(monthlyMovieDataFrame))
             # for row in monthlyMovieDataFrame.iterrows():
             #    movie = row[1].to_dict()
             #    print("\tTITLE:{:40} RELEASE {:8} BUDGET {:10} REVENUE {:10}".
@@ -158,14 +184,32 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         annualRevenue = yearMovieDataFrame['revenue'].sum()
         numberOfMovies = len(yearMovieDataFrame['revenue'])
 
+        annualRevenueMean.append(np.nanmean(yearMovieDataFrame['revenue']))
+        annualRevenueStd.append(np.nanstd(yearMovieDataFrame['revenue']))
+        annualRevenueMedian.append(np.nanmedian(yearMovieDataFrame['revenue']))
+
+        annualBudgetMean.append(np.nanmean(yearMovieDataFrame['budget']))
+        annualBudgetStd.append(np.nanstd(yearMovieDataFrame['budget']))
+        annualBudgetMedian.append(np.nanmedian(yearMovieDataFrame['budget']))
+
         print("Annual Budget {:,}".format(annualBudget))
         print("Annual Revenue {:,}".format(annualRevenue))
         print("Number Of Movies {:,}".format(numberOfMovies))
+        print("Annual Revenue Mean {:,}".format(annualRevenueMean[0]))
+        print("Annual Revenue Median {:,}".format(annualRevenueMedian[0]))
+        print("Annual Revenue Std {:,}".format(annualRevenueStd[0]))
+        print("Annual Budget Mean {:,}".format(annualBudgetMean[0]))
+        print("Annual Budget Median {:,}".format(annualBudgetMedian[0]))
+        print("Annual Budget Std {:,}".format(annualBudgetStd[0]))
+
         for m in months:
-            print("Month {}  Budget {:,} Revenue {:,}".format(
+            print("Month {}  Budget {:,} Revenue {:,} Mean {:,} Median {:,} Std {:,}".format(
                 m, monthlyBudget[m - 1], monthlyRevenue[m - 1],
-                monthlyRevenue[m - 1]))
-            #self.centralWidget.matplot.addBars(x=m, y=monthlyRevenue[m - 1], year=year)
+                monthlyRevenueMean[m-1], monthlyRevenueMedian[m-1],  monthlyRevenueStd[m-1]
+            )
+            )
+
+            # self.centralWidget.matplot.addBars(x=m, y=monthlyRevenue[m - 1], year=year)
         """
         openMovieList = []
         self.statusBar().showMessage("Start Open Movie Downloading....")
