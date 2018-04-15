@@ -55,6 +55,7 @@ class UI(PyQt5.QtWidgets.QMainWindow):
                 ORM.Movies).filter(ORM.Movies.title == movieTitle).one()
         except sqlalchemy.orm.exc.NoResultFound:
             logging.error("Movie Not in Database {}".format(movieTitle))
+            print("Movie Not in Database {}".format(movieTitle))
             return
 
         year, month, day = movieTitleQuery.release_date.split('-')
@@ -86,15 +87,15 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         self.centralWidget.releaseDateInformation.infoLabel.setText(
             movieTitleQuery.release_date)
         self.centralWidget.budgetInformation.infoLabel.setText(
-            "{:,}".format(movieTitleQuery.budget))
+            "{:,.2f}".format(movieTitleQuery.budget))
         self.centralWidget.revenueInformation.infoLabel.setText(
-            "{:,}".format(movieTitleQuery.revenue))
+            "{:,.2f}".format(movieTitleQuery.revenue))
         self.centralWidget.runTimeInformation.infoLabel.setNum(
             movieTitleQuery.runtime)
         self.centralWidget.voteCountInformation.infoLabel.setText(
-            "{:,}".format(movieTitleQuery.vote_count))
+            "{:,.2f}".format(movieTitleQuery.vote_count))
         self.centralWidget.voteAverageInformation.infoLabel.setText(
-            "{:,}".format(movieTitleQuery.vote_average))
+            "{:,.2f}".format(movieTitleQuery.vote_average))
         self.centralWidget.statusInformation.infoLabel.setText(
             movieTitleQuery.status)
 
@@ -106,11 +107,11 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         self.centralWidget.updatePoster(openMovie.posterFileName)
         self.statusBar().showMessage("Done Getting Poster")
 
-        self.analyzeYear(int(year))
+        self.analyzeYear(int(year), int(month))
 
         return
 
-    def analyzeYear(self, year=None):
+    def analyzeYear(self, year=None, month=None):
 
         print("Analyze Year {}".format(year))
         months = range(1, 13)
@@ -192,18 +193,31 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         annualBudgetStd.append(np.nanstd(yearMovieDataFrame['budget']))
         annualBudgetMedian.append(np.nanmedian(yearMovieDataFrame['budget']))
 
-        print("Annual Budget {:,}".format(annualBudget))
-        print("Annual Revenue {:,}".format(annualRevenue))
-        print("Number Of Movies {:,}".format(numberOfMovies))
-        print("Annual Revenue Mean {:,}".format(annualRevenueMean[0]))
-        print("Annual Revenue Median {:,}".format(annualRevenueMedian[0]))
-        print("Annual Revenue Std {:,}".format(annualRevenueStd[0]))
-        print("Annual Budget Mean {:,}".format(annualBudgetMean[0]))
-        print("Annual Budget Median {:,}".format(annualBudgetMedian[0]))
-        print("Annual Budget Std {:,}".format(annualBudgetStd[0]))
+        print("Annual Budget {:,.2f}".format(annualBudget))
+        print("Annual Revenue {:,.2f}".format(annualRevenue))
+        print("Number Of Movies {:,.2f}".format(numberOfMovies))
+        print("Annual Revenue Mean {:,.2f}".format(annualRevenueMean[0]))
+        print("Annual Revenue Median {:,.2f}".format(annualRevenueMedian[0]))
+        print("Annual Revenue Std {:,.2f}".format(annualRevenueStd[0]))
+        print("Annual Budget Mean {:,.2f}".format(annualBudgetMean[0]))
+        print("Annual Budget Median {:,.2f}".format(annualBudgetMedian[0]))
+        print("Annual Budget Std {:,.2f}".format(annualBudgetStd[0]))
+
+        self.centralWidget.annualRevenueMean.infoLabel.setText(
+            "{:,.2f}".format(annualRevenueMean[0]))
+        self.centralWidget.annualRevenueMedian.infoLabel.setText(
+            "{:,.2f}".format(annualRevenueMedian[0]))
+        self.centralWidget.annualRevenueStd.infoLabel.setText("{:,.2f}".format(annualRevenueStd[0]))
+
+        self.centralWidget.monthlyRevenueMean.infoLabel.setText(
+            "{:,.2f}".format(monthlyRevenueMean[month]))
+        self.centralWidget.monthlyRevenueMedian.infoLabel.setText(
+            "{:,.2f}".format(monthlyRevenueMedian[month]))
+        self.centralWidget.monthlyRevenueStd.infoLabel.setText(
+            "{:,.2f}".format(monthlyRevenueStd[month]))
 
         for m in months:
-            print("Month {}  Budget {:,} Revenue {:,} Mean {:,} Median {:,} Std {:,}".format(
+            print("Month {}  Budget {:,.2f} Revenue {:,.2f} Mean {:,.2f} Median {:,.2f} Std {:,.2f}".format(
                 m, monthlyBudget[m - 1], monthlyRevenue[m - 1],
                 monthlyRevenueMean[m-1], monthlyRevenueMedian[m-1],  monthlyRevenueStd[m-1]
             )

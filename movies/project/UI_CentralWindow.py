@@ -28,6 +28,9 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         hboxInfo1 = PyQt5.QtWidgets.QHBoxLayout()
         hboxInfo2 = PyQt5.QtWidgets.QHBoxLayout()
         hboxInfo3 = PyQt5.QtWidgets.QHBoxLayout()
+        hboxInfo4 = PyQt5.QtWidgets.QHBoxLayout()
+        hboxInfo5 = PyQt5.QtWidgets.QHBoxLayout()
+
         hboxInfoAndPoster = PyQt5.QtWidgets.QHBoxLayout()
         vboxInfo = PyQt5.QtWidgets.QVBoxLayout()
         vbox = PyQt5.QtWidgets.QVBoxLayout()
@@ -40,7 +43,7 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
 
         # hboxInfo is the layer for presenting the results from the search
         self.directorInformation = UI_MovieInfo.UI_MovieInfo(title="Director:")
-        self.actorInformation = UI_MovieInfo.UI_MovieInfo(title="Actor:")
+        self.actorInformation = UI_MovieInfo.UI_MovieInfo(title="Lead Actor:")
         self.releaseDateInformation = UI_MovieInfo.UI_MovieInfo(
             title="Release Date:")
 
@@ -54,6 +57,14 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
             title="Vote Average:")
         self.statusInformation = UI_MovieInfo.UI_MovieInfo(title="Status:")
 
+        self.monthlyRevenueMean = UI_MovieInfo.UI_MovieInfo(title="Monthly Revenue Mean:")
+        self.monthlyRevenueMedian = UI_MovieInfo.UI_MovieInfo(title="Monthly Revenue Median:")
+        self.monthlyRevenueStd = UI_MovieInfo.UI_MovieInfo(title="Monthly Revenue Std:")
+
+        self.annualRevenueMean = UI_MovieInfo.UI_MovieInfo(title="Annual Revenue Mean:")
+        self.annualRevenueMedian = UI_MovieInfo.UI_MovieInfo(title="Annual Revenue Median:")
+        self.annualRevenueStd = UI_MovieInfo.UI_MovieInfo(title="Annual Revenue Std:")
+
         hboxInfo1.addLayout(self.directorInformation.getLayout())
         hboxInfo1.addLayout(self.actorInformation.getLayout())
         hboxInfo1.addLayout(self.releaseDateInformation.getLayout())
@@ -66,6 +77,14 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         hboxInfo3.addLayout(self.voteAverageInformation.getLayout())
         hboxInfo3.addLayout(self.statusInformation.getLayout())
 
+        hboxInfo4.addLayout(self.monthlyRevenueMean.getLayout())
+        hboxInfo4.addLayout(self.monthlyRevenueMedian.getLayout())
+        hboxInfo4.addLayout(self.monthlyRevenueStd.getLayout())
+
+        hboxInfo5.addLayout(self.annualRevenueMean.getLayout())
+        hboxInfo5.addLayout(self.annualRevenueMedian.getLayout())
+        hboxInfo5.addLayout(self.annualRevenueStd.getLayout())
+
         self.posterLabel = PyQt5.QtWidgets.QLabel("Poster Goes Here")
         self.pixmap = PyQt5.QtGui.QPixmap()
 
@@ -75,6 +94,8 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         vboxInfo.addLayout(hboxInfo1)
         vboxInfo.addLayout(hboxInfo2)
         vboxInfo.addLayout(hboxInfo3)
+        vboxInfo.addLayout(hboxInfo4)
+        vboxInfo.addLayout(hboxInfo5)
         hboxInfoAndPoster.addLayout(vboxInfo)
 
         vbox.addLayout(hboxSearch)
