@@ -4,9 +4,11 @@ This is a wrapper around the Open Movie Database python API module.
 
 import logging
 import os
+import re
 import sys
 import traceback
 
+import bs4
 import omdb
 import requests
 
@@ -19,11 +21,12 @@ class OpenMovie():
         self.title = title
         self.client = omdb.OMDBClient(apikey=os.environ['OMDB_API_KEY'])
         self.posterFileName = None
+        self.awardsDict = {}
         try:
             os.mkdir("Posters")
         except:
             pass
-        
+
         try:
             self.movie = self.client.get(title=title, tomatoes=tomatoes)
         except Exception:
@@ -38,10 +41,10 @@ class OpenMovie():
         """
 
         if 'poster' not in self.movie:
-            self.posterFileName= "NO POSTER"
+            self.posterFileName = "NO POSTER"
             logging.error("No poster for {}".format(self.title))
             return False
-        
+
         poster_url = self.movie['poster']
 
         try:
@@ -67,3 +70,51 @@ class OpenMovie():
             return False
 
         return True
+
+    def getAwards(self):
+        """
+        Get a list of awards from IMDB movie page
+        """
+
+        if 'imdb_id' not in self.movie:
+            logging.error("No IMDB entry for {}".format(self.title))
+
+        imdb_url = "https://www.imdb.com/title/{}/awards?ref_=tt_awd".format(
+            self.movie['imdb_id'])
+
+        r = requests.get(imdb_url)
+        soup = bs4.BeautifulSoup(r.text, "lxml")
+        data = []
+        table = soup.find('table', attrs={'class': 'awards'})
+        rows = table.find_all('tr')
+        for row in rows:
+            cols = row.find_all('td')
+            cols = [ele.text.strip() for ele in cols]
+            data.append([ele for ele in cols if ele])  # Get rid of empty values
+
+        index = 0
+        for x in data:
+            # print(x)
+            nominee = re.search('Nominee', x[0])
+            if nominee:
+                break
+            else:
+                if index == 0:
+                    awards = x[1].split('\n')
+                    y = awards[1:]
+                    while '' in y:
+                        y.remove('')
+                        self.awardsDict[awards[0]] = y
+                else:
+                    awards = x[0].split('\n')
+                    y = awards[1:]
+                    while '' in y:
+                        y.remove('')
+                    self.awardsDict[awards[0]] = y
+
+            index = index + 1
+        # print(awards_dict)
+        # for k, v in self.awardsDict.items():
+        #    print("Award: {:40} Winner: {:40}".format(k, ", ".join(v)))
+
+        return self.awardsDict

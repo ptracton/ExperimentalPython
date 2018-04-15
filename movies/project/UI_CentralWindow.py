@@ -88,9 +88,13 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         self.posterLabel = PyQt5.QtWidgets.QLabel("Poster Goes Here")
         self.pixmap = PyQt5.QtGui.QPixmap()
 
+        self.awardsDisplay = PyQt5.QtWidgets.QTextEdit()
+        self.awardsDisplay.setReadOnly(True)
+
         self.matplot = QtMpl.QtMpl(parent=parent)
 
         hboxInfoAndPoster.addWidget(self.posterLabel)
+        hboxInfoAndPoster.addWidget(self.awardsDisplay)
         vboxInfo.addLayout(hboxInfo1)
         vboxInfo.addLayout(hboxInfo2)
         vboxInfo.addLayout(hboxInfo3)
@@ -107,9 +111,23 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         return
 
     def updatePoster(self, posterFileName=None):
+        """
+        Display the poster in the GUI
+        """
         self.pixmap.load(posterFileName)
         scaledPixmap = self.pixmap.scaled(self.posterLabel.size(),
                                           PyQt5.QtCore.Qt.KeepAspectRatio)
         self.posterLabel.setPixmap(self.pixmap)
         self.posterLabel.setScaledContents(False)
+        return
+
+    def updateAwards(self, awardsDict=None):
+        """
+        Update the awards display window
+        """
+
+        for k, v in awardsDict.items():
+            str = "AWARD: {:40}  WINNER: {:40}".format(k, ", ".join(v))
+            print(str)
+            self.awardsDisplay.append(str)
         return

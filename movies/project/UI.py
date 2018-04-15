@@ -107,14 +107,19 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         self.centralWidget.updatePoster(openMovie.posterFileName)
         self.statusBar().showMessage("Done Getting Poster")
 
+        self.centralWidget.awardsDisplay.clear()
+        awardsDict = openMovie.getAwards()
+        self.centralWidget.updateAwards(awardsDict)
+
         self.analyzeYear(int(year), int(month))
 
         return
 
     def analyzeYear(self, year=None, month=None):
 
-        print("Analyze Year {}".format(year))
+        print("Analyze Year {} {}".format(year, month))
         months = range(1, 13)
+        print("MONTHS {}".format(months))
         monthlyBudget = []
         monthlyRevenue = []
         monthlyMaxRevenue = []
@@ -210,11 +215,11 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         self.centralWidget.annualRevenueStd.infoLabel.setText("{:,.2f}".format(annualRevenueStd[0]))
 
         self.centralWidget.monthlyRevenueMean.infoLabel.setText(
-            "{:,.2f}".format(monthlyRevenueMean[month]))
+            "{:,.2f}".format(monthlyRevenueMean[month-1]))
         self.centralWidget.monthlyRevenueMedian.infoLabel.setText(
-            "{:,.2f}".format(monthlyRevenueMedian[month]))
+            "{:,.2f}".format(monthlyRevenueMedian[month-1]))
         self.centralWidget.monthlyRevenueStd.infoLabel.setText(
-            "{:,.2f}".format(monthlyRevenueStd[month]))
+            "{:,.2f}".format(monthlyRevenueStd[month-1]))
 
         for m in months:
             print("Month {}  Budget {:,.2f} Revenue {:,.2f} Mean {:,.2f} Median {:,.2f} Std {:,.2f}".format(
