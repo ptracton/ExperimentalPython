@@ -86,6 +86,11 @@ class OpenMovie():
         soup = bs4.BeautifulSoup(r.text, "lxml")
         data = []
         table = soup.find('table', attrs={'class': 'awards'})
+
+        if table is None:
+            self.awardsDict = {}
+            return
+
         rows = table.find_all('tr')
         for row in rows:
             cols = row.find_all('td')

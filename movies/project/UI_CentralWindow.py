@@ -125,9 +125,9 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         """
         Update the awards display window
         """
-
-        for k, v in awardsDict.items():
-            str = "AWARD: {:40}  WINNER: {:40}".format(k, ", ".join(v))
-            print(str)
-            self.awardsDisplay.append(str)
+        if awardsDict is not None:
+            for k, v in awardsDict.items():
+                str = "AWARD: {:40}  WINNER: {:40}".format(k, ", ".join(v))
+                print(str)
+                self.awardsDisplay.append(str)
         return
