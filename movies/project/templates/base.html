@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {% block head %}
+    <title>{% block title %}{% endblock %}Lab 8</title>
+    {% endblock %}
+</head>
+<body>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        &copy; Copyright 2018 by <a href="http://uclaextension.edu/">UCLA</a>.
+        {% endblock %}
+    </div>
+</body>
+</html>
