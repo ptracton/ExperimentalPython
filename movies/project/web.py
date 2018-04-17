@@ -7,6 +7,7 @@ import sys
 import flask
 import jinja2
 
+import OpenMovie
 import ORM
 
 app = flask.Flask(__name__)
@@ -29,8 +30,20 @@ def display_movie():
     """
     Collects the information about the movie and displays it
     """
-    movie_title = str(flask.request.form['MOVIE'])
-    string = "Display Movie: {}".format(movie_title)
+    movieTitle = str(flask.request.form['MOVIE'])
+    string = "Display Movie: {}".format(movieTitle)
+
+    # Get our data
+    openMovie = OpenMovie.OpenMovie(title=movieTitle)
+    cast = openMovie.getCast()
+    director, crew = openMovie.getCrew()
+    movieTitleQuery = openMovie.getMovieTitleData()
+    year, month, day = movieTitleQuery.release_date.split('-')
+    awardsDict = openMovie.getAwards()
+    month = int(month)
+    openMovie.analyzeMovie(year=int(year), month=month)
+    getPoster = (openMovie.getPoster())
+
     return string
 
 
