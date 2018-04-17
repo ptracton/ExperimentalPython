@@ -3,6 +3,7 @@
 import logging
 import os
 import sys
+import traceback
 
 import flask
 import jinja2
@@ -35,16 +36,40 @@ def display_movie():
 
     # Get our data
     openMovie = OpenMovie.OpenMovie(title=movieTitle)
+    try:
+        movieTitleQuery = openMovie.getMovieTitleData()
+    except:
+        logging.error("Movie Not in Database {}".format(movieTitle))
+        print("Movie Not in Database {}".format(movieTitle))
+        # print(traceback.format_exc())
+        logging.error(traceback.format_exc())
+        template = env.get_template('error.html')
+        html = template.render(
+            movieTitle=movieTitle
+        )
+        return html
+
     cast = openMovie.getCast()
     director, crew = openMovie.getCrew()
-    movieTitleQuery = openMovie.getMovieTitleData()
     year, month, day = movieTitleQuery.release_date.split('-')
     awardsDict = openMovie.getAwards()
     month = int(month)
     openMovie.analyzeMovie(year=int(year), month=month)
     getPoster = (openMovie.getPoster())
 
-    return string
+    # Update the UI
+    template = env.get_template('display_movie.html')
+    html = template.render(
+        movieTitle=movieTitle,
+        director=director,
+        leadActor=cast[0]['name'],
+        releaseDate=movieTitleQuery.release_date,
+        budget=movieTitleQuery.budget,
+        revenue=movieTitleQuery.revenue,
+        runTime=movieTitleQuery.runtime
+    )
+
+    return html
 
 
 @app.route('/', methods=['GET', 'POST'])

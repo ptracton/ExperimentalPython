@@ -6,6 +6,7 @@ GUI elements.  This is also the level of handling signal/slot connections.
 import datetime
 import json
 import logging
+import traceback
 
 import numpy as np
 import pandas as pd
@@ -51,9 +52,19 @@ class UI(PyQt5.QtWidgets.QMainWindow):
 
         # Get our data
         openMovie = OpenMovie.OpenMovie(title=movieTitle)
+        try:
+            movieTitleQuery = openMovie.getMovieTitleData()
+        except:
+            logging.error("Movie Not in Database {}".format(movieTitle))
+            print("Movie Not in Database {}".format(movieTitle))
+            # print(traceback.format_exc())
+            logging.error(traceback.format_exc())
+
+            return
+
         cast = openMovie.getCast()
         director, crew = openMovie.getCrew()
-        movieTitleQuery = openMovie.getMovieTitleData()
+
         year, month, day = movieTitleQuery.release_date.split('-')
         awardsDict = openMovie.getAwards()
         month = int(month)

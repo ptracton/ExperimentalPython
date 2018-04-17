@@ -15,6 +15,8 @@ import requests
 
 import numpy as np
 import pandas as pd
+import sqlalchemy
+
 import ORM
 
 
@@ -226,7 +228,7 @@ class OpenMovie():
                 ORM.Movies).filter(ORM.Movies.title == self.title).one()
         except sqlalchemy.orm.exc.NoResultFound:
             logging.error("Movie Not in Database {}".format(movieTitle))
-            print("Movie Not in Database {}".format(movieTitle))
+            #print("Movie Not in Database {}".format(movieTitle))
             return False
 
         return movieTitleQuery
