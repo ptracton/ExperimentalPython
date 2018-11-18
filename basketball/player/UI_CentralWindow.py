@@ -21,10 +21,29 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         hboxPlayerName.addWidget(self.playerNameLineEdit)
         hboxPlayerName.addWidget(self.playerNamePushButton)
 
-        vboxLayout = PyQt5.QtWidgets.QVBoxLayout()
-        vboxLayout.addLayout(hboxPlayerName)
+        self.imageLabel = PyQt5.QtWidgets.QLabel("Image Goes Here")
+        self.pixmap = PyQt5.QtGui.QPixmap()
+        
+        hboxLayout = PyQt5.QtWidgets.QHBoxLayout()
+        hboxLayout.addWidget(self.imageLabel)
 
         self.commonInfo = UI_CommonInfo.UI_CommonInfo()
-        vboxLayout.addLayout(self.commonInfo.getLayout())
+        hboxLayout.addLayout(self.commonInfo.getLayout())
+
+        vboxLayout = PyQt5.QtWidgets.QVBoxLayout()
+        vboxLayout.addLayout(hboxPlayerName)
+        vboxLayout.addLayout(hboxLayout)
+        
         self.setLayout(vboxLayout)
         return
+
+    def updateImage(self, imageFileName=None):
+        """
+        Display the image in the GUI
+        """
+        self.pixmap.load(imageFileName)
+        scaledPixmap = self.pixmap.scaled(self.imageLabel.size(),
+                                          PyQt5.QtCore.Qt.KeepAspectRatio)
+        self.imageLabel.setPixmap(self.pixmap)
+        self.imageLabel.setScaledContents(False)
+        return    

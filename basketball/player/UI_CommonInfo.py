@@ -27,14 +27,33 @@ class UI_CommonInfo(PyQt5.QtWidgets.QDialog):
         self.playerHeight = PyQt5.QtWidgets.QLabel("")
         self.hbox1.addWidget(heightLabel)
         self.hbox1.addWidget(self.playerHeight)
-
         
         weightLabel = PyQt5.QtWidgets.QLabel("Weight:")
         self.playerWeight = PyQt5.QtWidgets.QLabel("")
         self.hbox1.addWidget(weightLabel)
         self.hbox1.addWidget(self.playerWeight)
+
+        self.hbox2 = PyQt5.QtWidgets.QHBoxLayout()
+
+        seasonLabel = PyQt5.QtWidgets.QLabel("Season:")
+        self.playerSeason = PyQt5.QtWidgets.QLabel("")
+        self.hbox2.addWidget(seasonLabel)
+        self.hbox2.addWidget(self.playerSeason)
+
+        jerseyLabel = PyQt5.QtWidgets.QLabel("Jersey:")
+        self.playerJersey = PyQt5.QtWidgets.QLabel("")
+        self.hbox2.addWidget(jerseyLabel)
+        self.hbox2.addWidget(self.playerJersey)
+
+        positionLabel = PyQt5.QtWidgets.QLabel("Position:")
+        self.playerPosition = PyQt5.QtWidgets.QLabel("")
+        self.hbox2.addWidget(positionLabel)
+        self.hbox2.addWidget(self.playerPosition)
+
         
         self.topLayout.addLayout(self.hbox1)
+        self.topLayout.addLayout(self.hbox2)
+                
         return
 
     def getLayout(self):

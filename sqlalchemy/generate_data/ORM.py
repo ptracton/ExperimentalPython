@@ -11,8 +11,9 @@ port = 5432
 database = "postgres"
 url = 'postgresql://{}:{}@{}:{}/{}'
 db_string = url.format(user, password, host, port, database)
-db = sqlalchemy.create_engine(db_string)
+db = sqlalchemy.create_engine(db_string, echo=True)
 base = sqlalchemy.ext.declarative.declarative_base()
+
 
 class People(base):
     __tablename__ = 'people'

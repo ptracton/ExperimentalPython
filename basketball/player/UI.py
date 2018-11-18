@@ -30,14 +30,31 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         return
 
     def playerNamePushButtonClicked(self):
+        """
+        Respond to the primary button being pushed
+        """
 
+        # Read the name from the UI
         playerName = self.centralWidget.playerNameLineEdit.text()
-        print(playerName)
+
+
+        # Create an instance of NBA_Player which gets information for us
         player = NBA_Player.NBA_Player(fullName=playerName)
 
+        # If there is no player of this name, return before updating the GUI
+        if player.isValid() is False:
+            return
+
+        player.getImage()
+        
         self.centralWidget.commonInfo.playerID.setText(str(player.commonInfoList[0]))
         self.centralWidget.commonInfo.playerBirthDate.setText(player.commonInfoList[6])
         self.centralWidget.commonInfo.playerHeight.setText(player.commonInfoList[10])
         self.centralWidget.commonInfo.playerWeight.setText(player.commonInfoList[11])
+
+        self.centralWidget.commonInfo.playerSeason.setText(str(player.commonInfoList[12]))
+        self.centralWidget.commonInfo.playerJersey.setText(str(player.commonInfoList[13]))
+        self.centralWidget.commonInfo.playerPosition.setText(player.commonInfoList[14])
+        self.centralWidget.updateImage(player.imageFileName)
         
         return
