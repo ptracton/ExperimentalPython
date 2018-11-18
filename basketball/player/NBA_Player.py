@@ -31,11 +31,14 @@ class NBA_Player():
         
         # https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/endpoints/commonplayerinfo.md
         self.commonInfoList = commonplayerinfo.CommonPlayerInfo(player_id=self.playerID).get_dict()["resultSets"][0]["rowSet"][0]
-        print(self.commonInfoList)
+        #print(self.commonInfoList)
 
         # https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/endpoints/playercareerstats.md
-        #self.careerStatsDict = playercareerstats.PlayerCareerStats(player_id=self.playerID).get_dict()
-        #print(self.careerStatsDict)
+        self.careerStatsDict = playercareerstats.PlayerCareerStats(player_id=self.playerID).get_dict()
+        self.careerHeaders = self.careerStatsDict["resultSets"][0]["headers"]
+        self.careerStatsList = self.careerStatsDict["resultSets"][0]["rowSet"]
+        
+        #print(self.careerHeaders)
         return 
 
     def isValid(self):
@@ -63,4 +66,9 @@ class NBA_Player():
         Get the player's picture
         """
         imageURL = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/{}/2018/260x190/{}.png".format(self.commonInfoList[16], self.playerID)
-        local_file, r = urllib.request.urlretrieve(imageURL, self.imageFileName)
+        try:
+            local_file, r = urllib.request.urlretrieve(imageURL, self.imageFileName)
+        except:
+            pass
+
+

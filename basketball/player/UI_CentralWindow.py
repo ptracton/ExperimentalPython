@@ -30,9 +30,15 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         self.commonInfo = UI_CommonInfo.UI_CommonInfo()
         hboxLayout.addLayout(self.commonInfo.getLayout())
 
+        self.playerDataTable = PyQt5.QtWidgets.QTableWidget()
+        self.playerDataTable.setRowCount(2)
+        self.playerDataTable.setColumnCount(27)
+        #        self.playerDataTable.setHorizontalHeaderLabels(["Header 1", "Header 2", "Header 3"])
+                
         vboxLayout = PyQt5.QtWidgets.QVBoxLayout()
         vboxLayout.addLayout(hboxPlayerName)
         vboxLayout.addLayout(hboxLayout)
+        vboxLayout.addWidget(self.playerDataTable)
         
         self.setLayout(vboxLayout)
         return
@@ -41,7 +47,11 @@ class UI_CentralWindow(PyQt5.QtWidgets.QDialog):
         """
         Display the image in the GUI
         """
-        self.pixmap.load(imageFileName)
+        try:
+            self.pixmap.load(imageFileName)
+        except:
+            return
+        
         scaledPixmap = self.pixmap.scaled(self.imageLabel.size(),
                                           PyQt5.QtCore.Qt.KeepAspectRatio)
         self.imageLabel.setPixmap(self.pixmap)

@@ -56,5 +56,17 @@ class UI(PyQt5.QtWidgets.QMainWindow):
         self.centralWidget.commonInfo.playerJersey.setText(str(player.commonInfoList[13]))
         self.centralWidget.commonInfo.playerPosition.setText(player.commonInfoList[14])
         self.centralWidget.updateImage(player.imageFileName)
-        
+
+        self.centralWidget.playerDataTable.setHorizontalHeaderLabels(player.careerHeaders)
+        self.centralWidget.playerDataTable.setRowCount(len(player.careerStatsList))
+
+        row = 0
+        column = 0
+        for line in player.careerStatsList:
+            for cell in line:
+                #print("{} {} {}".format(row, column, player.careerStatsList[row][column]))
+                self.centralWidget.playerDataTable.setItem(row, column, PyQt5.QtWidgets.QTableWidgetItem(str(player.careerStatsList[row][column])))
+                column = column + 1
+            row = row + 1
+            column = 0
         return
